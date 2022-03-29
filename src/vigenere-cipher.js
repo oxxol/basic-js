@@ -20,13 +20,80 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(type) {
+    this.type = type;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  encrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!')
+    const alph = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let strArr = message.toUpperCase().split('')
+    let keyArr = key.repeat(Math.ceil(message.length / key.length)).toUpperCase().split('');
+    let keyArray = [];
+    for (let i = 0; i < message.length; i++) {
+      if (alph.includes(message.toUpperCase()[i])) {
+        keyArray.push(keyArr.shift())
+        strArr.shift()
+      } else {
+        keyArray.push(strArr.shift())
+      }
+    }
+    let result = [];
+    let indexA = 'A'.charCodeAt()
+    for (let i = 0; i < message.length; i++) {
+      if (alph.includes(message.toUpperCase()[i])) {
+        let indexKey = keyArray[i].charCodeAt() - indexA;
+        let indexStr = message.toUpperCase()[i].charCodeAt() - indexA;
+        let n = indexA + (indexKey + indexStr) % 26
+
+        result.push(String.fromCharCode(n))
+      } else {
+        result.push(message.toUpperCase()[i])
+      }
+    }
+    if (this.type === true || this.type === undefined) {
+      return result.join('')
+    } else if (this.type === false) {
+      return result.reverse().join('')
+    }
+
+  }
+  decrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!')
+
+    const alph = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let strArr = message.toUpperCase().split('')
+    let keyArr = key.repeat(Math.ceil(message.length / key.length)).toUpperCase().split('');
+
+    let keyArray = [];
+    for (let i = 0; i < message.length; i++) {
+      if (alph.includes(message.toUpperCase()[i])) {
+        keyArray.push(keyArr.shift())
+        strArr.shift()
+
+      } else {
+        keyArray.push(strArr.shift())
+      }
+    }
+    let result = [];
+    let indexA = 'A'.charCodeAt()
+
+    for (let i = 0; i < message.length; i++) {
+      if (alph.includes(message.toUpperCase()[i])) {
+        let indexKey = keyArray[i].charCodeAt() - indexA;
+        let indexStr = message.toUpperCase()[i].charCodeAt() - indexA;
+        let n = indexA + (indexStr - indexKey + 26) % 26
+
+        result.push(String.fromCharCode(n))
+      } else {
+        result.push(message.toUpperCase()[i])
+      }
+    }
+
+    if (this.type === true || this.type === undefined) {
+      return result.join('')
+    } else if (this.type === false) {
+      return result.reverse().join('')
+    }
   }
 }
 
